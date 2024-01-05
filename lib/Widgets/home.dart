@@ -1,4 +1,5 @@
 import 'package:expense/Widgets/Expense_list/expense_list.dart';
+import 'package:expense/Widgets/new_expense.dart';
 import 'package:expense/models/expense.dart';
 import 'package:flutter/material.dart';
 
@@ -41,9 +42,7 @@ class _HomeState extends State<Home> {
             onPressed: () {
               showModalBottomSheet(
                 context: context,
-                builder: (ctx) => const Text(
-                  'Modal Bottom Sheet',
-                ),
+                builder: (ctx) => const NewExpense(),
               );
             },
           )
