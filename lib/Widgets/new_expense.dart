@@ -2,7 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:expense/models/expense.dart';
 
 class NewExpense extends StatefulWidget {
-  const NewExpense({super.key});
+  const NewExpense({
+    super.key,
+    required this.onAddExpense,
+  });
+
+  final Function(Expense expense) onAddExpense;
 
   @override
   State<NewExpense> createState() {
@@ -31,8 +36,8 @@ class _NewExpenseState extends State<NewExpense> {
   }
 
   void _submitValidate() {
-    final _selectedAmount = double.tryParse(_amountController.text);
-    final isInvalid = _selectedAmount == null || _selectedAmount <= 0;
+    final selectedAmount = double.tryParse(_amountController.text);
+    final isInvalid = selectedAmount == null || selectedAmount <= 0;
     if (_titleController.text.trim().isEmpty ||
         isInvalid ||
         _selectedDate == null) {
@@ -54,12 +59,25 @@ class _NewExpenseState extends State<NewExpense> {
         ),
       );
     }
+
+    widget.onAddExpense(Expense(
+        title: _titleController.text,
+        date: _selectedDate!,
+        amount: selectedAmount!,
+        category: _selectedCategory));
+    Navigator.pop(context);
+  }
+
+  void dispose() {
+    _titleController.dispose();
+    _amountController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(context) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(16, 48, 16, 16),
       child: Column(
         children: [
           TextField(
@@ -67,6 +85,8 @@ class _NewExpenseState extends State<NewExpense> {
             maxLength: 50,
             decoration: const InputDecoration(
               label: Text('Title'),
+              hintFadeDuration: Duration(milliseconds: 500),
+              hintText: 'Enter an Expense Title',
             ),
           ),
           const SizedBox(height: 20),

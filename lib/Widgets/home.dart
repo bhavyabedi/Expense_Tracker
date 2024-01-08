@@ -26,25 +26,65 @@ class _HomeState extends State<Home> {
       category: Category.leisure,
     ),
   ];
+  void _openAddExpenseOverlay() {
+    showModalBottomSheet(
+      isScrollControlled: true,
+      context: context,
+      builder: (ctx) => NewExpense(
+        onAddExpense: _addExpense,
+      ),
+    );
+  }
+
+  void _addExpense(Expense expense) {
+    setState(() {
+      _registeredExpenses.add(expense);
+    });
+  }
+
+  void _removeExpense(Expense expense) {
+    var registeredExpensesIndex = _registeredExpenses.indexOf(expense);
+    setState(() {
+      _registeredExpenses.remove(expense);
+    });
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: const Text('Item Deleted.'),
+        action: SnackBarAction(
+            label: 'Undo',
+            onPressed: () {
+              setState(() {
+                _registeredExpenses.insert(
+                  registeredExpensesIndex,
+                  expense,
+                );
+              });
+            }),
+      ),
+    );
+  }
 
   @override
   Widget build(context) {
+    Widget mainContent = const Center(
+      child: Text('No Expenses this month? Track karle Laude.'),
+    );
+    if (_registeredExpenses.isNotEmpty) {
+      mainContent = ExpenseList(
+        registeredExpense: _registeredExpenses,
+        onRemoveExpense: _removeExpense,
+      );
+    }
     return Scaffold(
-      backgroundColor: Colors.yellow[100],
       appBar: AppBar(
-        backgroundColor: Colors.amber[200],
         title: const Text(
           'Expense Tracker',
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.add),
-            onPressed: () {
-              showModalBottomSheet(
-                context: context,
-                builder: (ctx) => const NewExpense(),
-              );
-            },
+            onPressed: _openAddExpenseOverlay,
           )
         ],
       ),
@@ -52,7 +92,7 @@ class _HomeState extends State<Home> {
         children: [
           const Text('CHART'),
           Expanded(
-            child: ExpenseList(registeredExpense: _registeredExpenses),
+            child: mainContent,
           ),
         ],
       ),
