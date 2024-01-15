@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:expense/Widgets/home.dart';
+// import 'package:flutter/services.dart';
 
 var kColorScheme = ColorScheme.fromSeed(
   seedColor: Colors.amber,
@@ -10,7 +11,12 @@ var kDarkColorScheme = ColorScheme.fromSeed(
   seedColor: const Color.fromARGB(255, 148, 111, 0),
 );
 void main() {
-  runApp(
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  // ]).then(
+  // (value) =>
+  return runApp(
     MaterialApp(
       darkTheme: ThemeData.dark().copyWith(
         cardTheme: const CardTheme().copyWith(
@@ -64,4 +70,5 @@ void main() {
       home: const Home(),
     ),
   );
+  // );
 }

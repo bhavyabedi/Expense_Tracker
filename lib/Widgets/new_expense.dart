@@ -76,93 +76,100 @@ class _NewExpenseState extends State<NewExpense> {
 
   @override
   Widget build(context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 48, 16, 16),
-      child: Column(
-        children: [
-          TextField(
-            controller: _titleController,
-            maxLength: 50,
-            decoration: const InputDecoration(
-              label: Text('Title'),
-              hintFadeDuration: Duration(milliseconds: 500),
-              hintText: 'Enter an Expense Title',
-            ),
-          ),
-          const SizedBox(height: 20),
-          Row(
-            //AMOUNT ROW
+    final keyboardSpace = MediaQuery.of(context).viewInsets.bottom;
+
+    return SizedBox(
+      height: double.infinity,
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(16, 48, 16, keyboardSpace + 16),
+          child: Column(
             children: [
-              SizedBox(
-                width: 200,
-                child: TextField(
-                  //AMOUNT WIDGET
-                  controller: _amountController,
-                  maxLength: 20,
-                  keyboardType: TextInputType.number,
-                  decoration: const InputDecoration(
-                    prefix: Text('INR '),
-                    label: Text('Amount'),
-                  ),
+              TextField(
+                controller: _titleController,
+                maxLength: 50,
+                decoration: const InputDecoration(
+                  label: Text('Title'),
+                  hintFadeDuration: Duration(milliseconds: 500),
+                  hintText: 'Enter an Expense Title',
                 ),
               ),
-              const Spacer(),
+              const SizedBox(height: 20),
               Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.end,
+                //AMOUNT ROW
                 children: [
-                  Text(
-                    _selectedDate == null
-                        ? 'No Date Selected' //Also, Imported the formatter function from the Models Expense file
-                        : formatter.format(
-                            _selectedDate!), //! Sign to force flutter to consider it as a non-null value which it'll definitely be.
+                  SizedBox(
+                    width: 200,
+                    child: TextField(
+                      //AMOUNT WIDGET
+                      controller: _amountController,
+                      maxLength: 20,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        prefix: Text('INR '),
+                        label: Text('Amount'),
+                      ),
+                    ),
                   ),
-                  IconButton(
-                    onPressed: _showDatePicker,
-                    icon: const Icon(Icons.calendar_today_outlined),
+                  const Spacer(),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        _selectedDate == null
+                            ? 'No Date Selected' //Also, Imported the formatter function from the Models Expense file
+                            : formatter.format(
+                                _selectedDate!), //! Sign to force flutter to consider it as a non-null value which it'll definitely be.
+                      ),
+                      IconButton(
+                        onPressed: _showDatePicker,
+                        icon: const Icon(Icons.calendar_today_outlined),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                //Buttons Row for SUBMIT AND CANCEL
+                children: [
+                  DropdownButton(
+                    value: _selectedCategory,
+                    items: Category.values
+                        .map(
+                          (category) => DropdownMenuItem(
+                            value: category,
+                            child: Text(category.name.toUpperCase()),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) {
+                      if (value == null) return;
+                      setState(() {
+                        _selectedCategory = value;
+                      });
+                    },
+                  ),
+                  const Spacer(),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Cancel'),
+                  ),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  ElevatedButton(
+                    onPressed: _submitValidate,
+                    child: const Text('Submit'),
                   ),
                 ],
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          Row(
-            //Buttons Row for SUBMIT AND CANCEL
-            children: [
-              DropdownButton(
-                value: _selectedCategory,
-                items: Category.values
-                    .map(
-                      (category) => DropdownMenuItem(
-                        value: category,
-                        child: Text(category.name.toUpperCase()),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (value) {
-                  if (value == null) return;
-                  setState(() {
-                    _selectedCategory = value;
-                  });
-                },
-              ),
-              const Spacer(),
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: const Text('Cancel'),
-              ),
-              const SizedBox(
-                width: 10,
-              ),
-              ElevatedButton(
-                onPressed: _submitValidate,
-                child: const Text('Submit'),
-              ),
-            ],
-          ),
-        ],
+        ),
       ),
     );
   }
